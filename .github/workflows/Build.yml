@@ -24,3 +24,9 @@ jobs:
         
       - name: Run the Cake script
         uses: cake-build/cake-action@v1
+
+      - name: Run the Cake script
+        uses: actions/upload-artifact@v2
+        with:
+          name: Built Package
+          path: ./*.nupkg

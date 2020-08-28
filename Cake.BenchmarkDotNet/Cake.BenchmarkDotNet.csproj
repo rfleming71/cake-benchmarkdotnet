@@ -9,12 +9,20 @@
     <PackageProjectUrl>https://github.com/rfleming71/cake-benchmarkdotnet</PackageProjectUrl>
     <PackageId>Cake.BenchmarkDotNet</PackageId>
     <Description>Cake addin for working with BenchmarkDotNet</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Cake.Core" Version="0.38.4" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Perfolizer" Version="0.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

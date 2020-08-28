@@ -14,14 +14,12 @@ public static class BenchmarkDotNetAliases
     {
         context.Log.Write(Verbosity.Normal, LogLevel.Information, $"Comparing {baseline} to {diff}");
 
-        Threshold test;
-        if (!Threshold.TryParse(settings.TestThreshold, out test))
+        if (!Threshold.TryParse(settings.TestThreshold, out Threshold test))
         {
             throw new ArgumentException(nameof(settings.TestThreshold));
         }
 
-        Threshold noise;
-        if (!Threshold.TryParse(settings.NoiseThreshold, out noise))
+        if (!Threshold.TryParse(settings.NoiseThreshold, out Threshold noise))
         {
             throw new ArgumentException(nameof(settings.NoiseThreshold));
         }

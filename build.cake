@@ -1,21 +1,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 // ARGUMENTS
 ///////////////////////////////////////////////////////////////////////////////
-#addin "nuget:?package=Cake.BenchmarkDotNet&version=1.0.3&loaddependencies=true"
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var buildNumber = Argument("buildNumber", "0");
 var branchName = Argument("branchName", "testing").ToLower();
 var majorMinorVersion = "0.1";
 string GetBuildNumber() => $"{majorMinorVersion}.{buildNumber}";
-
-Task("CompareBenchmarks")
-.Does(() => {
-   BenchmarkDotNetCompareResults("C:/temp/bdn/baseline", "C:/temp/bdn/new", new BenchmarkDotNetCompareSettings() {
-      TrxFilePath = "C:/temp/bdn/test-results.trx",
-      TestThreshold = "5%",
-   });
-});
 
 ///////////////////////////////////////////////////////////////////////////////
 // TASKS

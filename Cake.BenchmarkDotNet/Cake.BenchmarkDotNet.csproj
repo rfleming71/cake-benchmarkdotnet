@@ -9,6 +9,7 @@
     <PackageProjectUrl>https://github.com/rfleming71/cake-benchmarkdotnet</PackageProjectUrl>
     <PackageId>Cake.BenchmarkDotNet</PackageId>
     <Description>Cake addin for working with BenchmarkDotNet</Description>
+    <license type="MIT"/>
   </PropertyGroup>
 
   <ItemGroup>

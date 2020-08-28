@@ -1,12 +1,21 @@
 ///////////////////////////////////////////////////////////////////////////////
 // ARGUMENTS
 ///////////////////////////////////////////////////////////////////////////////
+#addin "nuget:?package=Cake.BenchmarkDotNet&version=1.0.3&loaddependencies=true"
 var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var buildNumber = Argument("buildNumber", "0");
 var branchName = Argument("branchName", "testing").ToLower();
-var majorMinorVersion = "1.0";
+var majorMinorVersion = "0.1";
 string GetBuildNumber() => $"{majorMinorVersion}.{buildNumber}";
+
+Task("CompareBenchmarks")
+.Does(() => {
+   BenchmarkDotNetCompareResults("C:/temp/bdn/baseline", "C:/temp/bdn/new", new BenchmarkDotNetCompareSettings() {
+      TrxFilePath = "C:/temp/bdn/test-results.trx",
+      TestThreshold = "5%",
+   });
+});
 
 ///////////////////////////////////////////////////////////////////////////////
 // TASKS
@@ -16,6 +25,7 @@ Task("Build Library")
 .Does(() => {
    DotNetCoreBuild("Cake.BenchmarkDotNet.sln", new DotNetCoreBuildSettings {
       Configuration = configuration,
+      
       ArgumentCustomization = args => 
                args
                   .Append($"/p:AssemblyVersion={GetBuildNumber()}")
@@ -42,13 +52,17 @@ Task("Package Library")
    CreateNugetPackage($"{GetBuildNumber()}-prerelease");
 });
 
+
 Task("clean")
 .Does(() => {
     CleanDirectories("./**/bin");
     CleanDirectories("./**/obj");
-   foreach (var file in GetFiles($".\\*.nupkg")) {
-      DeleteFile(file);
-   }
+});
+
+Task("Set TeamCity Build Number")
+.WithCriteria(() => TeamCity.IsRunningOnTeamCity)
+.Does(() => {
+   BuildSystem.TeamCity.SetBuildNumber(GetBuildNumber());
 });
 
 void CreateNugetPackage(string version)

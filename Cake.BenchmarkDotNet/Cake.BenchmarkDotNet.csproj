@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Deterministic>true</Deterministic>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Authors>Ryan Fleming</Authors>
+    <RepositoryUrl>https://github.com/rfleming71/cake-benchmarkdotnet</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/rfleming71/cake-benchmarkdotnet</PackageProjectUrl>
+    <PackageId>Cake.BenchmarkDotNet</PackageId>
+    <Description>Cake addin for working with BenchmarkDotNet</Description>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net.Http.Headers;
 using Cake.BenchmarkDotNet;
-using Cake.BenchmarkDotNet.Printer.Trx;
+using Cake.BenchmarkDotNet.Printers;
+using Cake.BenchmarkDotNet.Printers.Html;
+using Cake.BenchmarkDotNet.Printers.Markdown;
+using Cake.BenchmarkDotNet.Printers.Trx;
 using Cake.Core;
 using Cake.Core.Annotations;
 using Cake.Core.Diagnostics;
@@ -25,10 +30,31 @@ public static class BenchmarkDotNetAliases
         }
 
         var results = new Comparer(test, noise).Compare(baseline, diff, settings.Filters);
-        if (!string.IsNullOrWhiteSpace(settings.TrxFilePath))
+        Print(context, "trx", results, settings.TrxFilePath);
+        Print(context, "html", results, settings.HtmlFilePath);
+        Print(context, "md", results, settings.MarkdownFilePath);
+    }
+
+
+    static Dictionary<string, IPrinter> _printers = new Dictionary<string, IPrinter>()
+    {
+        { "trx", new TrxPrinter() },
+        { "md", new MarkdownPrinter() },
+        { "html", new HtmlPrinter() },
+    };
+
+    private static void Print(ICakeContext context, string type, IEnumerable<CompareResult> results, string outputPath)
+    {
+        if (string.IsNullOrWhiteSpace(outputPath))
+            return;
+
+        if (!_printers.TryGetValue(type.ToLower(), out var printer))
         {
-            context.Log.Write(Verbosity.Normal, LogLevel.Information, $"Writing comparision results to {settings.TrxFilePath}");
-            new TrxPrinter().Print(results, settings.TrxFilePath);
+            context.Log.Write(Verbosity.Normal, LogLevel.Error, $"Unkown printer type: {type}");
+            return;
         }
+
+        context.Log.Write(Verbosity.Normal, LogLevel.Information, $"Writing comparision results to {outputPath}");
+        printer.Print(results, outputPath);
     }
 }

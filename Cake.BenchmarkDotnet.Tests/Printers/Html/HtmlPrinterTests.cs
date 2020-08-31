@@ -1,0 +1,65 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using Cake.BenchmarkDotNet;
+using Cake.BenchmarkDotNet.Dto;
+using Cake.BenchmarkDotNet.Printers.Html;
+using Perfolizer.Mathematics.SignificanceTesting;
+using Xunit;
+
+namespace Cake.BenchmarkDotnet.Tests.Printers.Html
+{
+    public class HtmlPrinterTests : IDisposable
+    {
+        private HtmlPrinter _printer;
+        private string _outputPath;
+
+        public HtmlPrinterTests()
+        {
+            _outputPath = Path.GetTempFileName();
+            _printer = new HtmlPrinter();
+        }
+
+        public void Dispose()
+        {
+            File.Delete(_outputPath);
+        }
+
+        [Fact]
+        public void NullOutputPath_DoesNothing()
+        {
+            var results = new[] {
+                 new CompareResult("123", null, null, EquivalenceTestConclusion.Slower)
+            };
+
+            _printer.Print(results, null);
+        }
+
+        [Fact]
+        public void PrintReport()
+        {
+            var results = new[] {
+                 new CompareResult("123", GetBenchmark("test1", 100, 101), GetBenchmark("test1", 102, 103), EquivalenceTestConclusion.Slower),
+                 new CompareResult("124", GetBenchmark("test2", 100, 101), GetBenchmark("test1", 90, 90), EquivalenceTestConclusion.Faster),
+                 new CompareResult("125", GetBenchmark("test3", 100, 101), GetBenchmark("test1", 100, 101), EquivalenceTestConclusion.Same),
+            };
+
+            _printer.Print(results, _outputPath);
+
+            Assert.True(File.Exists(_outputPath));
+        }
+
+        private Benchmark GetBenchmark(string methodName, int median, int mean) => new Benchmark()
+        {
+            Method = methodName,
+            Type = "HtmlPrinterTests",
+            Namespace = "Cake.BenchmarkDotnet.Tests.Printers.Html",
+            Statistics = new Statistics()
+            {
+                Median = median,
+                Mean = mean,
+            }
+        };
+    }
+}

@@ -2,11 +2,12 @@
 using System.Xml;
 using System.Xml.Serialization;
 using Cake.BenchmarkDotNet.Printer.Trx.Dto;
+using Cake.BenchmarkDotNet.Printers;
 using Perfolizer.Mathematics.SignificanceTesting;
 
-namespace Cake.BenchmarkDotNet.Printer.Trx
+namespace Cake.BenchmarkDotNet.Printers.Trx
 {
-    internal class TrxPrinter
+    internal class TrxPrinter : IPrinter
     {
         public void Print(IEnumerable<CompareResult> results, string outputPath)
         {

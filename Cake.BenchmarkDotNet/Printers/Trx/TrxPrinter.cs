@@ -45,6 +45,7 @@ namespace Cake.BenchmarkDotNet.Printers.Trx
             {
                 TestName = result.BaseResult.Method,
                 Outcome = GetOutcome(result),
+                Duration = PrinterHelpers.FormatNsToTimespan((long)result.DiffResult.Statistics.Median)
             };
 
             if (result.Conclusion == EquivalenceTestConclusion.Slower)

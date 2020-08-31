@@ -26,7 +26,7 @@ namespace Cake.BenchmarkDotNet.Printers.Html
                     DiffMedian = $"{x.DiffResult.Statistics.Median}",
                 })
                 .ToMarkdownTable()
-                .WithHeaders("Conclusion", "Test Name", "Speed Difference", "Base Median (ns)", "Diff Median (ns)")
+                .WithHeaders("Conclusion", "Namespace", "Test Name", "Speed Difference", "Base Median (ns)", "Diff Median (ns)")
                 .ToHtml();
 
 

@@ -21,13 +21,14 @@ namespace Cake.BenchmarkDotNet.Printers.Markdown
                 .Select(x => new
                 {
                     Conclusion = x.Conclusion,
-                    TestName = $"{x.BaseResult.Namespace}.{x.BaseResult.Type}.{x.BaseResult.Method}",
+                    Namespace = x.BaseResult.Namespace,
+                    TestName = $"{x.BaseResult.Type}.{x.BaseResult.Method}",
                     Ratio = GetRatio(x.Conclusion, x.BaseResult, x.DiffResult),
                     BaseMedian = $"{x.BaseResult.Statistics.Median}",
                     DiffMedian = $"{x.DiffResult.Statistics.Median}",
                 })
                 .ToMarkdownTable()
-                .WithHeaders("Conclusion", "Test Name", "Speed Difference", "Base Median (ns)", "Diff Median (ns)")
+                .WithHeaders("Conclusion", "Namespace", "Test Name", "Speed Difference", "Base Median (ns)", "Diff Median (ns)")
                 .ToMarkdown();
 
             File.WriteAllText(outputPath, report);

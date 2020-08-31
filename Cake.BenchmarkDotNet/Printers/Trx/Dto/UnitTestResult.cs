@@ -22,6 +22,9 @@ namespace Cake.BenchmarkDotNet.Printer.Trx.Dto
 
         [XmlAttribute("testListId")]
         public string TestListId { get; set; }
+        
+        [XmlAttribute("duration")]
+        public string Duration { get; set; }
 
         [XmlAttribute("outcome")]
         public string Outcome { get; set; }

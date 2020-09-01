@@ -33,17 +33,20 @@ namespace Cake.BenchmarkDotNet.Printers.Trx
                 Name = result.Id,
                 TestMethod = new TestMethod()
                 {
-                    Name = result.BaseResult.Method,
+                    Name = FormatUnitTestName(result),
                     ClassName = result.BaseResult.Type,
                     CodeBase = result.BaseResult.Namespace,
                 },
             };
 
+        private string FormatUnitTestName(CompareResult result) => 
+            string.IsNullOrWhiteSpace(result.Runtime) ? result.BaseResult.Method : $"{result.BaseResult.Method} ({result.Runtime})";
+
         private UnitTestResult BuildUnitTestResult(CompareResult result)
         {
             var utr = new UnitTestResult()
             {
-                TestName = result.BaseResult.Method,
+                TestName = FormatUnitTestName(result),
                 Outcome = GetOutcome(result),
                 Duration = PrinterHelpers.FormatNsToTimespan((long)result.DiffResult.Statistics.Median)
             };

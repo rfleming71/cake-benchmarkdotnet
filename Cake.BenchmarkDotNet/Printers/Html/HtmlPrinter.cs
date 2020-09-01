@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Web;
 using Cake.BenchmarkDotNet.Dto;
 using MarkdownLog;
 using Perfolizer.Mathematics.SignificanceTesting;
@@ -14,46 +15,71 @@ namespace Cake.BenchmarkDotNet.Printers.Html
             if (outputPath == null)
                 return;
 
-            var resultGroups = results
-                .GroupBy(x => $"{x.BaseResult.Namespace}.{x.BaseResult.Type}")
+            var runtimes = results
+                .GroupBy(x => x.Runtime)
                 .ToArray();
 
-            var report = resultGroups
+            var report = runtimes
                 .Select(x => new
                 {
-                    Class = $"[{x.Key}]({x.Key}.html)",
+                    Runtime = $"[{x.Key}]({HttpUtility.UrlPathEncode(x.Key)}/index.html)",
                     Slower = x.Count(t => t.Conclusion == EquivalenceTestConclusion.Slower),
-                    Faster = x.Count(t => t.Conclusion == EquivalenceTestConclusion.Faster),
                     Same = x.Count(t => t.Conclusion == EquivalenceTestConclusion.Same),
+                    Faster = x.Count(t => t.Conclusion == EquivalenceTestConclusion.Faster),
                     Errors = x.Count(t => t.Conclusion == EquivalenceTestConclusion.Unknown),
                 })
-                .OrderBy(x => x.Class)
+                .OrderBy(x => x.Runtime)
                 .ToMarkdownTable()
-                .WithHeaders("Class", "Slower", "Same", "Faster", "Errors")
+                .WithHeaders("Runtime", "Slower", "Same", "Faster", "Errors")
                 .ToHtml();
 
             File.WriteAllText(Path.Combine(outputPath, "index.html"), report);
-
-            foreach (var group in resultGroups)
+            
+            foreach (var runtime in runtimes)
             {
-                report = group
-                    .OrderByDescending(x => x.Conclusion)
+                var testGroups = runtime
+                    .GroupBy(x => $"{x.BaseResult.Namespace}.{x.BaseResult.Type}")
+                    .ToArray();
+
+                report = testGroups
                     .Select(x => new
                     {
-                        x.Conclusion,
-                        x.BaseResult.Namespace,
-                        TestName = $"{x.BaseResult.Type}.{x.BaseResult.Method}",
-                        Ratio = GetRatio(x.Conclusion, x.BaseResult, x.DiffResult),
-                        BaseMedian = $"{x.BaseResult.Statistics.Median}",
-                        DiffMedian = $"{x.DiffResult.Statistics.Median}",
+                        Class = $"[{x.Key}]({x.Key}.html)",
+                        Slower = x.Count(t => t.Conclusion == EquivalenceTestConclusion.Slower),
+                        Faster = x.Count(t => t.Conclusion == EquivalenceTestConclusion.Faster),
+                        Same = x.Count(t => t.Conclusion == EquivalenceTestConclusion.Same),
+                        Errors = x.Count(t => t.Conclusion == EquivalenceTestConclusion.Unknown),
                     })
-                    .OrderByDescending(x => x.Conclusion)
-                    .ThenBy(x => x.TestName)
+                    .OrderBy(x => x.Class)
                     .ToMarkdownTable()
-                    .WithHeaders("Conclusion", "Namespace", "Test Name", "Speed Difference", "Base Median (ns)", "Diff Median (ns)")
+                    .WithHeaders("Class", "Slower", "Same", "Faster", "Errors")
                     .ToHtml();
 
-                File.WriteAllText(Path.Combine(outputPath, $"{group.Key}.html"), report);
+                var runtimePath = Path.Combine(outputPath, runtime.Key);
+                Directory.CreateDirectory(runtimePath);
+                File.WriteAllText(Path.Combine(runtimePath, $"index.html"), report);
+
+                foreach (var tests in testGroups)
+                {
+                    report = tests
+                        .OrderByDescending(x => x.Conclusion)
+                        .Select(x => new
+                        {
+                            x.Conclusion,
+                            x.BaseResult.Namespace,
+                            TestName = $"{x.BaseResult.Type}.{x.BaseResult.Method}",
+                            Ratio = GetRatio(x.Conclusion, x.BaseResult, x.DiffResult),
+                            BaseMedian = $"{x.BaseResult.Statistics.Median}",
+                            DiffMedian = $"{x.DiffResult.Statistics.Median}",
+                        })
+                        .OrderByDescending(x => x.Conclusion)
+                        .ThenBy(x => x.TestName)
+                        .ToMarkdownTable()
+                        .WithHeaders("Conclusion", "Namespace", "Test Name", "Speed Difference", "Base Median (ns)", "Diff Median (ns)")
+                        .ToHtml();
+
+                    File.WriteAllText(Path.Combine(runtimePath, $"{tests.Key}.html"), report);
+                }
             }
         }
 

@@ -28,7 +28,7 @@ namespace Cake.BenchmarkDotNet
             {
                 if (pair.baseResult.Statistics == null || pair.diffResult.Statistics == null)
                 {
-                    yield return new CompareResult(pair.id, pair.baseResult, pair.diffResult, EquivalenceTestConclusion.Unknown);
+                    yield return new CompareResult(pair.id, pair.runtime, pair.baseResult, pair.diffResult, EquivalenceTestConclusion.Unknown);
                 }
 
                 var baseValues = pair.baseResult.GetOriginalValues();
@@ -42,11 +42,11 @@ namespace Cake.BenchmarkDotNet
                     conclusion = noiseResult.Conclusion;
                 }
 
-                yield return new CompareResult(pair.id, pair.baseResult, pair.diffResult, conclusion);
+                yield return new CompareResult(pair.id, pair.runtime, pair.baseResult, pair.diffResult, conclusion);
             }
         }
 
-        private IEnumerable<(string id, Benchmark baseResult, Benchmark diffResult)> ReadResults(string baseFile, string diffFile, IEnumerable<string> filterPatterns)
+        private IEnumerable<(string id, string runtime, Benchmark baseResult, Benchmark diffResult)> ReadResults(string baseFile, string diffFile, IEnumerable<string> filterPatterns)
         {
             var baseFiles = GetFilesToParse(baseFile);
             var diffFiles = GetFilesToParse(diffFile);
@@ -62,13 +62,13 @@ namespace Cake.BenchmarkDotNet
             var benchmarkIdToDiffResults = diffResults
                 .SelectMany(result => result.Benchmarks)
                 .Where(benchmarkResult => !filters.Any() || filters.Any(filter => filter.IsMatch(benchmarkResult.FullName)))
-                .ToDictionary(benchmarkResult => benchmarkResult.FullName, benchmarkResult => benchmarkResult);
+                .ToDictionary(benchmarkResult => (benchmarkResult.FullName, GetRuntimeFromDisplayInfo(benchmarkResult.DisplayInfo)), benchmarkResult => benchmarkResult);
 
             return baseResults
                 .SelectMany(result => result.Benchmarks)
-                .ToDictionary(benchmarkResult => benchmarkResult.FullName, benchmarkResult => benchmarkResult) // we use ToDictionary to make sure the results have unique IDs
+                .ToDictionary(benchmarkResult => (benchmarkResult.FullName, GetRuntimeFromDisplayInfo(benchmarkResult.DisplayInfo)), benchmarkResult => benchmarkResult) // we use ToDictionary to make sure the results have unique IDs
                 .Where(baseResult => benchmarkIdToDiffResults.ContainsKey(baseResult.Key))
-                .Select(baseResult => (baseResult.Key, baseResult.Value, benchmarkIdToDiffResults[baseResult.Key]));
+                .Select(baseResult => (baseResult.Key.FullName, baseResult.Key.Item2, baseResult.Value, benchmarkIdToDiffResults[baseResult.Key]));
         }
 
         private string[] GetFilesToParse(string path)
@@ -96,6 +96,17 @@ namespace Cake.BenchmarkDotNet
 
         // https://stackoverflow.com/a/6907849/5852046 not perfect but should work for all we need
         private string WildcardToRegex(string pattern) => $"^{Regex.Escape(pattern).Replace(@"\*", ".*").Replace(@"\?", ".")}$";
+
+        private string GetRuntimeFromDisplayInfo(string displayInfo)
+        {
+            var result = Regex.Match(displayInfo, "Runtime=(.*?),", RegexOptions.IgnoreCase);
+            if (!result.Success)
+            {
+                return string.Empty;
+            }
+
+            return result.Groups[1].Value;
+        }
 
     }
 }

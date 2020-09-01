@@ -12,8 +12,8 @@ namespace Cake.BenchmarkDotnet.Tests.Printers.Markdown
 {
     public class MarkdownPrinterTests : IDisposable
     {
-        private MarkdownPrinter _printer;
-        private string _outputPath;
+        private readonly MarkdownPrinter _printer;
+        private readonly string _outputPath;
 
         public MarkdownPrinterTests()
         {
@@ -30,7 +30,7 @@ namespace Cake.BenchmarkDotnet.Tests.Printers.Markdown
         public void NullOutputPath_DoesNothing()
         {
             var results = new[] {
-                 new CompareResult("123", null, null, EquivalenceTestConclusion.Slower)
+                 new CompareResult("123", "Net Core 1", null, null, EquivalenceTestConclusion.Slower)
             };
 
             _printer.Print(results, null);
@@ -40,9 +40,9 @@ namespace Cake.BenchmarkDotnet.Tests.Printers.Markdown
         public void PrintReport()
         {
             var results = new[] {
-                 new CompareResult("123", GetBenchmark("test1", 100, 101), GetBenchmark("test1", 102, 103), EquivalenceTestConclusion.Slower),
-                 new CompareResult("124", GetBenchmark("test2", 100, 101), GetBenchmark("test1", 90, 90), EquivalenceTestConclusion.Faster),
-                 new CompareResult("125", GetBenchmark("test3", 100, 101), GetBenchmark("test1", 100, 101), EquivalenceTestConclusion.Same),
+                 new CompareResult("123", "Net Core 1", GetBenchmark("test1", 100, 101), GetBenchmark("test1", 102, 103), EquivalenceTestConclusion.Slower),
+                 new CompareResult("124", "Net Core 1", GetBenchmark("test2", 100, 101), GetBenchmark("test1", 90, 90), EquivalenceTestConclusion.Faster),
+                 new CompareResult("125", "Net Core 1", GetBenchmark("test3", 100, 101), GetBenchmark("test1", 100, 101), EquivalenceTestConclusion.Same),
             };
 
             _printer.Print(results, _outputPath);

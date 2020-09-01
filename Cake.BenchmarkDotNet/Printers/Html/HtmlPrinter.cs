@@ -33,7 +33,7 @@ namespace Cake.BenchmarkDotNet.Printers.Html
                 .WithHeaders("Runtime", "Slower", "Same", "Faster", "Errors")
                 .ToHtml();
 
-            File.WriteAllText(Path.Combine(outputPath, "index.html"), report);
+            File.WriteAllText(Path.Combine(outputPath, "index.html"), string.Format(Template, "./", report));
             
             foreach (var runtime in runtimes)
             {
@@ -57,7 +57,7 @@ namespace Cake.BenchmarkDotNet.Printers.Html
 
                 var runtimePath = Path.Combine(outputPath, runtime.Key);
                 Directory.CreateDirectory(runtimePath);
-                File.WriteAllText(Path.Combine(runtimePath, $"index.html"), report);
+                File.WriteAllText(Path.Combine(runtimePath, "index.html"), string.Format(Template, "../", report));
 
                 foreach (var tests in testGroups)
                 {
@@ -78,7 +78,7 @@ namespace Cake.BenchmarkDotNet.Printers.Html
                         .WithHeaders("Conclusion", "Namespace", "Test Name", "Speed Difference", "Base Median (ns)", "Diff Median (ns)")
                         .ToHtml();
 
-                    File.WriteAllText(Path.Combine(runtimePath, $"{tests.Key}.html"), report);
+                    File.WriteAllText(Path.Combine(runtimePath, $"{tests.Key}.html"), string.Format(Template, "../", report));
                 }
             }
         }
@@ -103,5 +103,7 @@ namespace Cake.BenchmarkDotNet.Printers.Html
             var diff = (diffResult.Statistics.Median - baseResult.Statistics.Median) / baseResult.Statistics.Median * 100;
             return $"{diff:0.00} %";
         }
+
+        private const string Template = @"<head><link rel=""stylesheet"" type=""text/css"" href=""{0}report_style.css""></head><body>{1}</body>";
     }
 }

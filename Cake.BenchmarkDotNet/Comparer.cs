@@ -102,7 +102,7 @@ namespace Cake.BenchmarkDotNet
             var result = Regex.Match(displayInfo, "Runtime=(.*?),", RegexOptions.IgnoreCase);
             if (!result.Success)
             {
-                return string.Empty;
+                return "Not Specified";
             }
 
             return result.Groups[1].Value;

@@ -46,8 +46,8 @@ namespace Cake.BenchmarkDotNet.Printers.Html
                     {
                         Class = $"[{x.Key}]({x.Key}.html)",
                         Slower = x.Count(t => t.Conclusion == EquivalenceTestConclusion.Slower),
-                        Faster = x.Count(t => t.Conclusion == EquivalenceTestConclusion.Faster),
                         Same = x.Count(t => t.Conclusion == EquivalenceTestConclusion.Same),
+                        Faster = x.Count(t => t.Conclusion == EquivalenceTestConclusion.Faster),
                         Errors = x.Count(t => t.Conclusion == EquivalenceTestConclusion.Unknown),
                     })
                     .OrderBy(x => x.Class)

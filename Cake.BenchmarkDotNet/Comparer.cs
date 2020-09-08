@@ -60,15 +60,15 @@ namespace Cake.BenchmarkDotNet
             var filters = filterPatterns.Select(pattern => new Regex(WildcardToRegex(pattern), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).ToArray();
 
             var benchmarkIdToDiffResults = diffResults
-                .SelectMany(result => result.Benchmarks)
-                .Where(benchmarkResult => !filters.Any() || filters.Any(filter => filter.IsMatch(benchmarkResult.FullName)))
-                .ToDictionary(benchmarkResult => (benchmarkResult.FullName, GetRuntimeFromDisplayInfo(benchmarkResult.DisplayInfo)), benchmarkResult => benchmarkResult);
+                .SelectMany(result => result.Benchmarks.Select(benchmark => (benchmark, result.HostEnvironmentInfo.RuntimeVersion)))
+                .Where(benchmarkResult => !filters.Any() || filters.Any(filter => filter.IsMatch(benchmarkResult.benchmark.FullName)))
+                .ToDictionary(benchmarkResult => (benchmarkResult.benchmark.FullName, GetRuntimeFromDisplayInfo(benchmarkResult.benchmark.DisplayInfo, benchmarkResult.RuntimeVersion)), benchmarkResult => benchmarkResult);
 
             return baseResults
-                .SelectMany(result => result.Benchmarks)
-                .ToDictionary(benchmarkResult => (benchmarkResult.FullName, GetRuntimeFromDisplayInfo(benchmarkResult.DisplayInfo)), benchmarkResult => benchmarkResult) // we use ToDictionary to make sure the results have unique IDs
+                .SelectMany(result => result.Benchmarks.Select(benchmark => (benchmark, result.HostEnvironmentInfo.RuntimeVersion)))
+                .ToDictionary(benchmarkResult => (benchmarkResult.benchmark.FullName, GetRuntimeFromDisplayInfo(benchmarkResult.benchmark.DisplayInfo, benchmarkResult.RuntimeVersion)), benchmarkResult => benchmarkResult) // we use ToDictionary to make sure the results have unique IDs
                 .Where(baseResult => benchmarkIdToDiffResults.ContainsKey(baseResult.Key))
-                .Select(baseResult => (baseResult.Key.FullName, baseResult.Key.Item2, baseResult.Value, benchmarkIdToDiffResults[baseResult.Key]));
+                .Select(baseResult => (baseResult.Key.FullName, baseResult.Key.Item2, baseResult.Value.benchmark, benchmarkIdToDiffResults[baseResult.Key].benchmark));
         }
 
         private string[] GetFilesToParse(string path)
@@ -97,16 +97,21 @@ namespace Cake.BenchmarkDotNet
         // https://stackoverflow.com/a/6907849/5852046 not perfect but should work for all we need
         private string WildcardToRegex(string pattern) => $"^{Regex.Escape(pattern).Replace(@"\*", ".*").Replace(@"\?", ".")}$";
 
-        private string GetRuntimeFromDisplayInfo(string displayInfo)
+        private string GetRuntimeFromDisplayInfo(string displayInfo, string defaultRuntimeInfo)
         {
             var result = Regex.Match(displayInfo, "Runtime=(.*?),", RegexOptions.IgnoreCase);
-            if (!result.Success)
+            if (result.Success)
             {
-                return "Not Specified";
+                return result.Groups[1].Value; ;
             }
 
-            return result.Groups[1].Value;
-        }
+            result = Regex.Match(defaultRuntimeInfo, "(.*?) \\(", RegexOptions.IgnoreCase);
+            if (result.Success)
+            {
+                return result.Groups[1].Value;
+            }
 
+            return "Not Specified";
+        }
     }
 }

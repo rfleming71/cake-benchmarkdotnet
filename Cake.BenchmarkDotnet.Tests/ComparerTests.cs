@@ -41,7 +41,7 @@ namespace Cake.BenchmarkDotnet.Tests
             var results = comparer.Compare(_baselineFolder, _diffFolder, new string[0]).ToList();
 
             Assert.Equal(8, results.Count());
-            Assert.Equal(2, results.Count(x => x.Runtime == "Not Specified"));
+            Assert.Equal(2, results.Count(x => x.Runtime == ".NET Core 3.1.7"));
             Assert.Equal(2, results.Count(x => x.Runtime == ".NET 4.8"));
             Assert.Equal(2, results.Count(x => x.Runtime == ".NET Core 3.1"));
             Assert.Equal(2, results.Count(x => x.Runtime == ".NET 4.6.1"));

@@ -11,6 +11,7 @@ using Cake.Core.Annotations;
 using Cake.Core.Diagnostics;
 using Perfolizer.Mathematics.Thresholds;
 
+[CakeAliasCategory("BenchmarkDotNet")]
 public static class BenchmarkDotNetAliases
 {
     [CakeMethodAlias]

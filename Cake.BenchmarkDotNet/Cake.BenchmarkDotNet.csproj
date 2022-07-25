@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <Deterministic>true</Deterministic>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <Authors>Ryan Fleming</Authors>
@@ -13,9 +13,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cake.Core" Version="0.38.4" />
+    <PackageReference Include="Cake.Core" Version="2.2.0" />
     <PackageReference Include="MarkdownLog.NS20" Version="0.10.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Perfolizer" Version="0.2.1" />
   </ItemGroup>
 

@@ -14,7 +14,7 @@ string GetBuildNumber() => $"{majorMinorVersion}.{buildNumber}";
 
 Task("Build Library")
 .Does(() => {
-   DotNetCoreBuild("Cake.BenchmarkDotNet.sln", new DotNetCoreBuildSettings {
+   DotNetBuild("Cake.BenchmarkDotNet.sln", new DotNetBuildSettings {
       Configuration = configuration,
       
       ArgumentCustomization = args => 
@@ -27,13 +27,13 @@ Task("Build Library")
 Task("Run Unit Tests")
 .IsDependentOn("Build Library")
 .Does(() => {
-   var settings = new DotNetCoreTestSettings
+   var settings = new DotNetTestSettings
    {
       Configuration = configuration,
       NoBuild = true,
       NoRestore = true,
    };
-   DotNetCoreTest($"Cake.BenchmarkDotNet.sln", settings);
+   DotNetTest($"Cake.BenchmarkDotNet.sln", settings);
 });
 
 Task("Package Library")
@@ -58,7 +58,7 @@ Task("Set TeamCity Build Number")
 
 void CreateNugetPackage(string version)
 {
-   var settings = new DotNetCorePackSettings()
+   var settings = new DotNetPackSettings()
    {
       Configuration = configuration,
       NoBuild = true,
@@ -66,7 +66,7 @@ void CreateNugetPackage(string version)
       NoRestore = true,
       ArgumentCustomization = args => args.Append($"/p:PackageVersion={version}")
    };
-   DotNetCorePack("Cake.BenchmarkDotNet/Cake.BenchmarkDotNet.csproj", settings);
+   DotNetPack("Cake.BenchmarkDotNet/Cake.BenchmarkDotNet.csproj", settings);
 }
 
 

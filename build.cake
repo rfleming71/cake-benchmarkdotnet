@@ -5,7 +5,7 @@ var target = Argument("target", "Default");
 var configuration = Argument("configuration", "Release");
 var buildNumber = Argument("buildNumber", EnvironmentVariable("GITHUB_RUN_NUMBER") ?? "0");
 var branchName = Argument("branchName", "testing").ToLower();
-var majorMinorVersion = "0.1";
+var majorMinorVersion = "0.2";
 string GetBuildNumber() => $"{majorMinorVersion}.{buildNumber}";
 
 ///////////////////////////////////////////////////////////////////////////////

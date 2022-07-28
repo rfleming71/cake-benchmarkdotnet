@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Cake.BenchmarkDotNet.Dto
+﻿namespace Cake.BenchmarkDotNet.Dto
 {
     public class Percentiles
     {

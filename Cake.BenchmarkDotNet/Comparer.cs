@@ -13,8 +13,16 @@ namespace Cake.BenchmarkDotNet
     // https://github.com/dotnet/performance/blob/master/src/tools/ResultsComparer/Program.cs
     public class Comparer
     {
+        internal static JsonSerializerSettings CustomJsonSerializerSettings { get; }
+
         private readonly Threshold _testThreshold;
         private readonly Threshold _noiseThreshold;
+
+        static Comparer()
+        {
+            CustomJsonSerializerSettings = new JsonSerializerSettings();
+            CustomJsonSerializerSettings.Converters.Add(NotANumberNumericConverter.Instance);
+        }
 
         public Comparer(Threshold testThreshold, Threshold noiseThreshold)
         {
@@ -85,7 +93,7 @@ namespace Cake.BenchmarkDotNet
         {
             try
             {
-                return JsonConvert.DeserializeObject<RunReport>(File.ReadAllText(resultFilePath));
+                return JsonConvert.DeserializeObject<RunReport>(File.ReadAllText(resultFilePath), CustomJsonSerializerSettings);
             }
             catch (Exception)
             {

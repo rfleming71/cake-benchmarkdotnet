@@ -79,5 +79,15 @@ namespace Cake.BenchmarkDotnet.Tests.Resources {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] SampleReportWithEmptyStringNumericValues {
+            get {
+                object obj = ResourceManager.GetObject("SampleReportWithEmptyStringNumericValues", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

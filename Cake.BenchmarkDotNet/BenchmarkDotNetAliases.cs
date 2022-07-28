@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http.Headers;
 using Cake.BenchmarkDotNet;
 using Cake.BenchmarkDotNet.Printers;
 using Cake.BenchmarkDotNet.Printers.Html;
@@ -36,8 +35,7 @@ public static class BenchmarkDotNetAliases
         Print(context, "md", results, settings.MarkdownFilePath);
     }
 
-
-    static Dictionary<string, IPrinter> _printers = new Dictionary<string, IPrinter>()
+    private static readonly Dictionary<string, IPrinter> _printers = new Dictionary<string, IPrinter>()
     {
         { "trx", new TrxPrinter() },
         { "md", new MarkdownPrinter() },

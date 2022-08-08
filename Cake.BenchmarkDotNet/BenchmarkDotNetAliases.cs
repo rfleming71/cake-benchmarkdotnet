@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Cake.BenchmarkDotNet;
+using Cake.BenchmarkDotNet.NuGetComparison;
 using Cake.BenchmarkDotNet.Printers;
 using Cake.BenchmarkDotNet.Printers.Html;
 using Cake.BenchmarkDotNet.Printers.Markdown;
@@ -35,6 +36,18 @@ public static class BenchmarkDotNetAliases
         Print(context, "md", results, settings.MarkdownFilePath);
     }
 
+    [CakeMethodAlias]
+    [CakeNamespaceImport("Cake.BenchmarkDotNet")]
+    public static void BenchmarkDotNetCompareNuGetResults(this ICakeContext context, string benchmarkDotNetArtifactsDirectory, BenchmarkDotNetNuGetCompareSettings settings)
+    {
+        context.Log.Write(Verbosity.Normal, LogLevel.Information, $"Comparing artifacts from '{benchmarkDotNetArtifactsDirectory}'.");
+
+        var nuGetCompareFinalResult = new NuGetComparer(settings.TestThresholdPercentage).Compare(benchmarkDotNetArtifactsDirectory, settings.Filters);
+        Print(context, "trx", nuGetCompareFinalResult, settings.TrxFilePath);
+        Print(context, "html", nuGetCompareFinalResult, settings.HtmlFilePath);
+        Print(context, "md", nuGetCompareFinalResult, settings.MarkdownFilePath);
+    }
+
     private static readonly Dictionary<string, IPrinter> _printers = new Dictionary<string, IPrinter>()
     {
         { "trx", new TrxPrinter() },
@@ -55,5 +68,20 @@ public static class BenchmarkDotNetAliases
 
         context.Log.Write(Verbosity.Normal, LogLevel.Information, $"Writing comparision results to {outputPath}");
         printer.Print(results, outputPath);
+    }
+
+    private static void Print(ICakeContext context, string type, NuGetCompareFinalResult nuGetCompareFinalResult, string outputPath)
+    {
+        if (string.IsNullOrWhiteSpace(outputPath))
+            return;
+
+        if (!_printers.TryGetValue(type.ToLower(), out var printer))
+        {
+            context.Log.Write(Verbosity.Normal, LogLevel.Error, $"Unkown printer type: {type}");
+            return;
+        }
+
+        context.Log.Write(Verbosity.Normal, LogLevel.Information, $"Writing comparision results to {outputPath}");
+        printer.Print(nuGetCompareFinalResult, outputPath);
     }
 }

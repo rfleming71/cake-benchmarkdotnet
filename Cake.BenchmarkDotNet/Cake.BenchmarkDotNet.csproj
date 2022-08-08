@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="Cake.Core" Version="2.2.0" />
+    <PackageReference Include="CsvHelper" Version="28.0.1" />
     <PackageReference Include="MarkdownLog.NS20" Version="0.10.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Perfolizer" Version="0.2.1" />

@@ -41,7 +41,7 @@ namespace Cake.BenchmarkDotNet.Printers.Markdown
 
             var reportHeader = $"# Perfomance Test Results ({DateTime.UtcNow} UTC){Environment.NewLine}{Environment.NewLine}"
                 + $"**Baseline:** {nuGetCompareFinalResult.BaselineVersion}{Environment.NewLine}{Environment.NewLine}"
-                + $"**Benchmark:** {(nuGetCompareFinalResult.BenchmarkVersion.ToLower() == "default" ? "Current Source Code" : nuGetCompareFinalResult.BenchmarkVersion)}{Environment.NewLine}{Environment.NewLine}";
+                + $"**Benchmark:** {(nuGetCompareFinalResult.BenchmarkVersion.ToLower() == "default" ? "Current Source Code" : nuGetCompareFinalResult.BenchmarkVersion)} (**Test Threshold:** {nuGetCompareFinalResult.TestThresholdPercentage}%){Environment.NewLine}{Environment.NewLine}";
 
             var slowerResultsTable = nuGetCompareFinalResult.TestResults
                 .Where(x => x.Conclusion == EquivalenceTestConclusion.Slower)

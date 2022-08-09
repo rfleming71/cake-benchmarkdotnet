@@ -42,7 +42,9 @@ public static class BenchmarkDotNetAliases
     {
         context.Log.Write(Verbosity.Normal, LogLevel.Information, $"Comparing artifacts from '{benchmarkDotNetArtifactsDirectory}'.");
 
-        var nuGetCompareFinalResult = new NuGetComparer(settings.TestThresholdPercentage).Compare(benchmarkDotNetArtifactsDirectory, settings.Filters);
+        var nuGetCompareFinalResult = new NuGetComparer(settings.TestThresholdPercentage)
+            .Compare(benchmarkDotNetArtifactsDirectory, settings.TestThresholdPercentage, settings.Filters);
+
         Print(context, "trx", nuGetCompareFinalResult, settings.TrxFilePath);
         Print(context, "html", nuGetCompareFinalResult, settings.HtmlFilePath);
         Print(context, "md", nuGetCompareFinalResult, settings.MarkdownFilePath);

@@ -111,7 +111,7 @@ namespace Cake.BenchmarkDotNet.Printers.Html
                 .ToHtml();
 
             var runtimesSummaryReportBody = @$"
-                {GetHtmlPageHeader(nuGetCompareFinalResult.BaselineVersion, nuGetCompareFinalResult.BenchmarkVersion)}
+                {GetHtmlPageHeader(nuGetCompareFinalResult.BaselineVersion, nuGetCompareFinalResult.BenchmarkVersion, nuGetCompareFinalResult.TestThresholdPercentage)}
                 {runtimesSummaryTable}
             ";
 
@@ -140,7 +140,7 @@ namespace Cake.BenchmarkDotNet.Printers.Html
                     .ToHtml();
 
                 var testClassesSummaryReportBody = @$"
-                    {GetHtmlPageHeader(nuGetCompareFinalResult.BaselineVersion, nuGetCompareFinalResult.BenchmarkVersion)}
+                    {GetHtmlPageHeader(nuGetCompareFinalResult.BaselineVersion, nuGetCompareFinalResult.BenchmarkVersion, nuGetCompareFinalResult.TestThresholdPercentage)}
                     <p><b>Runtime:</b> {runtime.Key}</p>
                     {testClassesSummaryTable}
                 ";
@@ -198,7 +198,7 @@ namespace Cake.BenchmarkDotNet.Printers.Html
                         .ToHtml();
 
                     var testClassSummaryReportBody = @$"
-                        {GetHtmlPageHeader(nuGetCompareFinalResult.BaselineVersion, nuGetCompareFinalResult.BenchmarkVersion)}
+                        {GetHtmlPageHeader(nuGetCompareFinalResult.BaselineVersion, nuGetCompareFinalResult.BenchmarkVersion, nuGetCompareFinalResult.TestThresholdPercentage)}
                         <p><b>Runtime:</b> {runtime.Key} &#8594 <b>TestClass:</b> {tests.Key}</p>
                         <h2>Slower Tests (focus on these)</h2>
                         {slowerTestsTable}
@@ -239,11 +239,11 @@ namespace Cake.BenchmarkDotNet.Printers.Html
 
         private const string Template = @"<head><link rel=""stylesheet"" type=""text/css"" href=""{0}report_style.css""></head><body>{1}</body>";
 
-        private static string GetHtmlPageHeader(string baselineVersion, string benchmarkVersion) =>
+        private static string GetHtmlPageHeader(string baselineVersion, string benchmarkVersion, double testThresholdPercentage) =>
             @$"
                 <h1>Perfomance Test Results ({DateTime.UtcNow} UTC)</h1>
                 <p><b>Baseline:</b> {baselineVersion}</p>
-                <p><b>Benchmark:</b> {(benchmarkVersion.ToLower() == "default" ? "Current Source Code" : benchmarkVersion)}</p>
+                <p><b>Benchmark:</b> {(benchmarkVersion.ToLower() == "default" ? "Current Source Code" : benchmarkVersion)} (<b>Test Threshold:</b> {testThresholdPercentage}%)</p>
             ";
     }
 }

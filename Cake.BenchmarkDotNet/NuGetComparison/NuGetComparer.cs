@@ -20,7 +20,7 @@ namespace Cake.BenchmarkDotNet.NuGetComparison
             _testThresholdPercentage = testThresholdPercentage;
         }
 
-        public NuGetCompareFinalResult Compare(string benchmarkDotNetArtifactsDirectory, IEnumerable<string> filterPatterns)
+        public NuGetCompareFinalResult Compare(string benchmarkDotNetArtifactsDirectory, double testThresholdPercentage, IEnumerable<string> filterPatterns)
         {
             var compareTestResults = new List<NuGetCompareTestResult>();
             var filters = filterPatterns.Select(pattern => new Regex(WildcardToRegex(pattern), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)).ToArray();
@@ -62,6 +62,7 @@ namespace Cake.BenchmarkDotNet.NuGetComparison
             return new NuGetCompareFinalResult(
                 compareTestResults?[0].BaselineVersion ?? "Unknown",
                 compareTestResults?[0].BenchmarkVersion ?? "Unknown",
+                testThresholdPercentage,
                 compareTestResults);
         }
 

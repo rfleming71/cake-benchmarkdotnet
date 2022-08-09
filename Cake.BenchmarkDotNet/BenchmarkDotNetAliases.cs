@@ -38,6 +38,7 @@ public static class BenchmarkDotNetAliases
 
     [CakeMethodAlias]
     [CakeNamespaceImport("Cake.BenchmarkDotNet")]
+    [CakeNamespaceImport("Cake.BenchmarkDotNet.NuGetComparison")]
     public static void BenchmarkDotNetCompareNuGetResults(this ICakeContext context, string benchmarkDotNetArtifactsDirectory, BenchmarkDotNetNuGetCompareSettings settings)
     {
         context.Log.Write(Verbosity.Normal, LogLevel.Information, $"Comparing artifacts from '{benchmarkDotNetArtifactsDirectory}'.");
